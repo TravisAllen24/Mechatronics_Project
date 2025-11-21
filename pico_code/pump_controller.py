@@ -2,37 +2,48 @@
 from machine import Pin
 import time
 
-# Configure pins
-pin16 = Pin(16, Pin.OUT)
-pin17 = Pin(17, Pin.OUT)
+class Pumps:
 
-def inflate():
-    pin17.value(0)   # ensure safety: turn off other pin first
-    pin16.value(1)
-    print("Inflating: GPIO16 ON, GPIO17 OFF")
+    def __init__(self):
+        # Configure pins
+        self.pin16 = Pin(16, Pin.OUT)
+        self.pin17 = Pin(17, Pin.OUT)
 
-def deflate():
-    pin16.value(0)   # ensure safety
-    pin17.value(1)
-    print("Deflating: GPIO16 OFF, GPIO17 ON")
+        self.all_off()
 
-def all_off():
-    pin16.value(0)
-    pin17.value(0)
-    print("Both OFF")
+    def __enter__(self):
+        return self
 
-def run_action(action, duration):
-    """Run inflate/deflate for `duration` seconds, then turn everything off."""
-    if action == "inflate":
-        inflate()
-    elif action == "deflate":
-        deflate()
-    else:
-        print("Unknown action:", action)
-        return
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.all_off()
 
-    print(f"Holding {action} for {duration} seconds...")
-    time.sleep(duration)
-    all_off()
-    print("Action complete.")
+    def inflate(self):
+        self.pin17.value(0)   # ensure safety: turn off other pin first
+        self.pin16.value(1)
+        print("Inflating: GPIO16 ON, GPIO17 OFF")
+
+    def deflate(self):
+        self.pin16.value(0)   # ensure safety
+        self.pin17.value(1)
+        print("Deflating: GPIO16 OFF, GPIO17 ON")
+
+    def all_off(self):
+        self.pin16.value(0)
+        self.pin17.value(0)
+        print("Both OFF")
+
+    def run_action(action, duration):
+        """Run inflate/deflate for `duration` seconds, then turn everything off."""
+        if action == "inflate":
+            self.inflate()
+        elif action == "deflate":
+            self.deflate()
+        else:
+            print("Unknown action:", action)
+            return
+
+        print(f"Holding {action} for {duration} seconds...")
+        time.sleep(duration)
+        all_off()
+        print("Action complete.")
 
