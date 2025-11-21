@@ -2,7 +2,6 @@
 import time
 import bluetooth
 from ble_uart import BLEUART
-import command_handler
 from pump_controller import Pumps
 from machine import I2C, Pin
 import time
@@ -27,13 +26,6 @@ def init_log_file():
 
     return log
 
-def on_ble_rx(msg: str):
-    """
-    Called whenever a BLE central writes text to the RX characteristic.
-    """
-    print("on_ble_rx got:", msg)
-    command_handler.handle_command(msg)
-
 def pressure_reading(log, sensor):
     try:
         current_time = utime.time()
@@ -55,7 +47,7 @@ def main():
         log = init_log_file()
 
         ble = bluetooth.BLE()
-        uart = BLEUART(ble, on_rx=on_ble_rx)
+        uart = BLEUART(ble, on_rx=pump.handle_command)
 
         print("Pump controller ready. Commands over BLE:")
         while True:
