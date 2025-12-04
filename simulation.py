@@ -12,7 +12,7 @@ V   = M / rho                  # m^3, neutrally buoyant at baseline
 z_max = 3.048                  # m (~10 ft max depth)
 
 # Drag parameters: D = 1/2 * Cd * rho * Vd * v^2
-Cd  = 0.5
+Cd  = 1.1
 Vd  = 0.05
 
 # Time settings
